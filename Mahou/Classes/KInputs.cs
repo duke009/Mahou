@@ -1,28 +1,37 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
-namespace Mahou {
+namespace Mahou.Classes {
 	static class KInputs {
-		/// <summary>
-		/// Creates INPUT from key and state.
-		/// </summary>
-		/// <param name="key">Key to be converted to INPUT.</param>
-		/// <param name="down">State of key(down=true, up=false)</param>
-		/// <returns>WinAPI.INPUT</returns>
-	    public static WinAPI.INPUT AddKey(Keys key, bool down) {
-	        var vk = (UInt16)key;
-	        var scan = (ushort)WinAPI.MapVirtualKey(vk, 0);
-	        System.Diagnostics.Debug.WriteLine("ADDED VK: " +vk + " KEY: " + key + " scan: " + scan);
-	        var input = new WinAPI.INPUT {
+	    /// <summary>
+	    /// Creates INPUT from key and state.
+	    /// </summary>
+	    /// <param name="key">Key to be converted to INPUT.</param>
+	    /// <param name="isPressed">State of key(down=true, up=false)</param>
+	    /// <returns>WinAPI.INPUT</returns>
+	    public static WinAPI.INPUT AddKey(Keys key, bool isPressed, bool isUnicode = false)
+	    {
+	        var vk = isUnicode ? (ushort)0x0u : (ushort) key;
+	        var scan = isUnicode ? (ushort)key : (ushort) WinAPI.MapVirtualKey(vk, 0);
+	        System.Diagnostics.Debug.WriteLine("ADDED VK: " + vk + " KEY: " + key + " scan: " + scan);
+
+	        var flags = isPressed ? 0 : WinAPI.KEYEVENTF_KEYUP;
+	        if (IsExtended(key))
+	            flags |= WinAPI.KEYEVENTF_EXTENDEDKEY;
+	        if (isUnicode)
+	            flags |= WinAPI.KEYEVENTF_UNICODE;
+
+	        var input = new WinAPI.INPUT
+	        {
 	            Type = WinAPI.INPUT_KEYBOARD,
-	            Data = {
-	                Keyboard = new WinAPI.KEYBDINPUT {
+	            Data =
+	            {
+	                Keyboard = new WinAPI.KEYBDINPUT
+	                {
 	                    Vk = vk,
-	                    Flags = IsExtended(key) ? (down ? (WinAPI.KEYEVENTF_EXTENDEDKEY) :
-	                                               (WinAPI.KEYEVENTF_KEYUP | WinAPI.KEYEVENTF_EXTENDEDKEY)) : 
-	                    							(down ? 0 : WinAPI.KEYEVENTF_KEYUP),
+	                    Flags = flags,
 	                    Scan = scan,
 	                    ExtraInfo = IntPtr.Zero,
 	                    Time = 0
@@ -31,12 +40,13 @@ namespace Mahou {
 	        };
 	        return input;
 	    }
-	    public static WinAPI.INPUT[] AddPress(Keys key, int times = 1) {
+
+	    public static WinAPI.INPUT[] AddPress(Keys key, int times = 1, bool isUnicode = false) {
 			var q = new List<WinAPI.INPUT>();
-			for (int j = 0; j <= times-1; j++) {
+			for (var j = 0; j <= times-1; j++) {
 				System.Diagnostics.Debug.WriteLine("Sending "+j+", key:"+key);
-				q.Add(AddKey(key, true));
-				q.Add(AddKey(key, false));
+				q.Add(AddKey(key, true, isUnicode));
+				q.Add(AddKey(key, false, isUnicode));
 			}
 			return q.ToArray();;
 	    }
@@ -65,10 +75,10 @@ namespace Mahou {
 				key == Keys.Divide;
 	    }
 	    public static string GetWordByIndex(string LINE, int index) {
-	    	var WORDS = Mahou.KMHook.SplitWords(LINE);
-	    	string word = "";
+	    	var WORDS = KMHook.SplitWords(LINE);
+	    	var word = "";
 	    	var len = 0;
-	    	for (int i = 0; i != WORDS.Length; i++) {
+	    	for (var i = 0; i != WORDS.Length; i++) {
 	    		if (index >= len && index <= (len += WORDS[i].Length)) {
 	    			word = WORDS[i];
 	//    			System.Diagnostics.Debug.WriteLine("WORD AT INDEX "+index + " IS => ["+word+"]");
@@ -87,12 +97,12 @@ namespace Mahou {
 	        foreach (var s in str) {
 	        	bool uselt1_vk, uselt2_vk;
 	        	ushort resultvk = 0;
-	        	short lt1_vk = WinAPI.VkKeyScanEx(s, Mahou.MahouUI.MAIN_LAYOUT1);
+	        	var lt1_vk = WinAPI.VkKeyScanEx(s, Mahou.MahouUI.MAIN_LAYOUT1);
 	        	uselt1_vk = lt1_vk != -1;
-	        	short lt2_vk = WinAPI.VkKeyScanEx(s, Mahou.MahouUI.MAIN_LAYOUT2);
+	        	var lt2_vk = WinAPI.VkKeyScanEx(s, Mahou.MahouUI.MAIN_LAYOUT2);
 	        	uselt2_vk = lt2_vk != -1;
 	        	if (uselt1_vk && uselt2_vk) {
-	        		var guess = Mahou.KMHook.WordGuessLayout(GetWordByIndex(str, index));
+	        		var guess = KMHook.WordGuessLayout(GetWordByIndex(str, index));
 	//        		System.Diagnostics.Debug.WriteLine("ST:"+guess.Item2);
 	        		var lt_guess = guess.Item2;
 	        		resultvk = (ushort)WinAPI.VkKeyScanEx(s, lt_guess);
@@ -100,7 +110,7 @@ namespace Mahou {
 	        		resultvk = (ushort)lt1_vk;
 	        	else if (uselt2_vk) 
 	        		resultvk = (ushort)lt2_vk;
-	        	bool resultvk_state = ((resultvk >> 8) & 0xff) == 1;
+	        	var resultvk_state = ((resultvk >> 8) & 0xff) == 1;
 	        	if (resultvk_state)
 	        		result.Add(KInputs.AddKey(Keys.RShiftKey, true));
 	            var down = new WinAPI.INPUT {
@@ -158,7 +168,7 @@ namespace Mahou {
 	    	var done = WinAPI.SendInput((UInt32)sinputs.Length, sinputs, Marshal.SizeOf(typeof(WinAPI.INPUT)));
 	    	System.Diagnostics.Debug.WriteLine("VK SENDED: " + sinputs[0].Data.Keyboard.Vk);
 	    	if (done != sinputs.Length)
-	    		Mahou.Logging.Log("ERROR during send input, lenght: " +done+ ", Win32ERR: " + Marshal.GetLastWin32Error());
+	    		Logging.Log("ERROR during send input, lenght: " +done+ ", Win32ERR: " + Marshal.GetLastWin32Error());
 	    }
 	}
 }

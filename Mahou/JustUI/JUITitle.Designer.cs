@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace JustUI {
+namespace Mahou.JustUI {
 	partial class JUITitle {
 		void InitializeComponent() {
 			Text = "Just UI Title";

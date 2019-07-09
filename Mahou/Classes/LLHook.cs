@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
-namespace Mahou {
+namespace Mahou.Classes {
 	/// <summary>
 	/// Low level hook.
 	/// </summary>
@@ -15,8 +15,8 @@ namespace Mahou {
 			if (!MahouUI.ENABLED) return;
 			if (_LLHook_ID != IntPtr.Zero)
 				UnSet();
-			using (Process currProcess = Process.GetCurrentProcess())
-				using (ProcessModule currModule = currProcess.MainModule)
+			using (var currProcess = Process.GetCurrentProcess())
+				using (var currModule = currProcess.MainModule)
 					_LLHook_ID = WinAPI.SetWindowsHookEx(WinAPI.WH_KEYBOARD_LL, _LLHook_proc, 
 					                                     WinAPI.GetModuleHandle(currModule.ModuleName), 0);
 			if (_LLHook_ID == IntPtr.Zero)
@@ -30,7 +30,7 @@ namespace Mahou {
 				Logging.Log("BAD! LLHook unregister failed: " + System.Runtime.InteropServices.Marshal.GetLastWin32Error(), 1);
 		}
 		public static IntPtr Callback(int nCode, IntPtr wParam, IntPtr lParam) {
-			if (MMain.mahou == null || nCode < 0) return WinAPI.CallNextHookEx(_LLHook_ID, nCode, wParam, lParam);
+			if (MMain.Mahou == null || nCode < 0) return WinAPI.CallNextHookEx(_LLHook_ID, nCode, wParam, lParam);
 			if (KMHook.ExcludedProgram() && !MahouUI.ChangeLayoutInExcluded) 
 				return WinAPI.CallNextHookEx(_LLHook_ID, nCode, wParam, lParam);
 			var vk = Marshal.ReadInt32(lParam);
@@ -38,15 +38,15 @@ namespace Mahou {
 			SetModifs(Key, wParam);
 			if (MahouUI.SnippetsEnabled)
 				if (KMHook.c_snip.Count > 0)
-					if (MMain.mahou.SnippetsExpandType == "Tab" && Key == Keys.Tab && !shift && !alt && !win && !ctrl) {
+					if (MMain.Mahou.SnippetsExpandType == "Tab" && Key == Keys.Tab && !shift && !alt && !win && !ctrl) {
 						WinAPI.keybd_event((byte)Keys.F14, (byte)Keys.F14, (int)WinAPI.KEYEVENTF_KEYUP, 0);
 						return (IntPtr)1; // Disable event
 					}
 			if (MahouUI.RemapCapslockAsF18) {
 				bool _shift = !shift, _alt = !alt, _ctrl = !ctrl, _win = !win;
 				if (Key == Keys.CapsLock) {
-					for (int i = 1; i!=5; i++) {
-						var KeyIndex = (int)typeof(MahouUI).GetField("Key"+i).GetValue(MMain.mahou);
+					for (var i = 1; i!=5; i++) {
+						var KeyIndex = (int)typeof(MahouUI).GetField("Key"+i).GetValue(MMain.Mahou);
 						if (KeyIndex == 8) // Shift+CapsLock 
 							_shift = shift;
 					}
@@ -56,7 +56,7 @@ namespace Mahou {
 				if (ctrl) mods += WinAPI.MOD_CONTROL;
 				if (shift) mods += WinAPI.MOD_SHIFT;
 				if (win) mods += WinAPI.MOD_WIN;
-				bool has = MMain.mahou.HasHotkey(new Hotkey(false, (uint)Keys.F18, mods, 77));
+				var has = MMain.Mahou.HasHotkey(new Hotkey(false, (uint)Keys.F18, mods, 77));
 				if (has) {
 					if (Hotkey.ContainsModifier((int)mods, (int)WinAPI.MOD_SHIFT))
 						_shift = shift;
@@ -67,10 +67,8 @@ namespace Mahou {
 					if (Hotkey.ContainsModifier((int)mods, (int)WinAPI.MOD_WIN))
 						_win = win;
 				}
-				var GJIME = false;
-				if (vk >= 240 && vk <= 242) // GJ IME's Shift/Alt/Ctrl + CapsLock
-					GJIME = true;
-	//			Debug.WriteLine(Key + " " +has + "// " + _shift + " " + _alt + " " + _ctrl + " " + _win + " " + mods + " >> " + (Key == Keys.CapsLock && _shift && _alt && _ctrl && _win));
+				var GJIME = vk >= 240 && vk <= 242;
+			    //			Debug.WriteLine(Key + " " +has + "// " + _shift + " " + _alt + " " + _ctrl + " " + _win + " " + mods + " >> " + (Key == Keys.CapsLock && _shift && _alt && _ctrl && _win));
 				if ((Key == Keys.CapsLock || GJIME) && _shift && _alt && _ctrl && _win) {
 					var flags = (int)(KInputs.IsExtended(Key) ? WinAPI.KEYEVENTF_EXTENDEDKEY : 0);
 					if (wParam == (IntPtr)WinAPI.WM_KEYUP)

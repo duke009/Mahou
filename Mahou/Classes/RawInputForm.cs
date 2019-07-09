@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace Mahou {
+namespace Mahou.Classes {
 	public class RawInputForm : Form {
 		public RawInputForm() {
 			this.Visible =false;
@@ -12,9 +12,9 @@ namespace Mahou {
 		}
 		protected override void WndProc(ref Message m) {
 			if (m.Msg == WinAPI.WM_INPUT) {
-				WinAPI.RAWINPUT input = new WinAPI.RAWINPUT();
-	            int outSize = 0;
-	            int size = Marshal.SizeOf(typeof(WinAPI.RAWINPUT));
+				var input = new WinAPI.RAWINPUT();
+	            var outSize = 0;
+	            var size = Marshal.SizeOf(typeof(WinAPI.RAWINPUT));
 	            outSize = WinAPI.GetRawInputData(m.LParam, WinAPI.RawInputCommand.Input, out input, ref size,
 	                                             Marshal.SizeOf(typeof(WinAPI.RAWINPUTHEADER)));
 	            if (outSize != -1) {
@@ -47,7 +47,7 @@ namespace Mahou {
 	                				k = (int)Keys.RMenu;
 	                			break;
 	                	}
-	        	    	KMHook.ListenKeyboard(k, input.Data.Keyboard.Message);
+	        	    	KMHook.DispatchKeyPress(k, input.Data.Keyboard.Message);
 	                }
 	            }
 			}
@@ -59,7 +59,7 @@ namespace Mahou {
 		/// </summary>
 		public void RegisterRawInputDevices(IntPtr hwnd, WinAPI.RawInputDeviceFlags flag = WinAPI.RawInputDeviceFlags.InputSink) {
 			if (!MahouUI.ENABLED) return;
-			WinAPI.RAWINPUTDEVICE[] rids = new WinAPI.RAWINPUTDEVICE[2];
+			var rids = new WinAPI.RAWINPUTDEVICE[2];
 			// Keyboard device
 			rids[0].UsagePage = 0x1;
             rids[0].Usage = 0x06;

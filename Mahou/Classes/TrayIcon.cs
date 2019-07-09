@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Mahou {
+namespace Mahou.Classes {
     public class TrayIcon {
         public event EventHandler<EventArgs> Exit, EnaDisable,
         	ShowHide, Restart, ConvertClip, TransliClip;
@@ -42,39 +42,45 @@ namespace Mahou {
         	EnDis.Checked = endis;
         }
         /// <summary>Transliterate the text in clipboard.</summary>
-        void TransliClipHandler(object sender, EventArgs e) {
-            if (TransliClip != null) TransliClip(this, null);
+        void TransliClipHandler(object sender, EventArgs e)
+        {
+            TransliClip?.Invoke(this, null);
         }
         /// <summary>Convert the text in clipboard.</summary>
-        void ConvertClipHandler(object sender, EventArgs e) {
-            if (ConvertClip != null) ConvertClip(this, null);
+        void ConvertClipHandler(object sender, EventArgs e)
+        {
+            ConvertClip?.Invoke(this, null);
         }
         /// <summary>Toggle Mahou, enable/disable event handler..</summary>
-        void EnaDisableHandler(object sender, EventArgs e) {
-            if (EnaDisable != null) EnaDisable(this, null);
+        void EnaDisableHandler(object sender, EventArgs e)
+        {
+            EnaDisable?.Invoke(this, null);
         }
         /// <summary>Restart event handler..</summary>
-        void RestartHandler(object sender, EventArgs e) {
-            if (Restart != null) Restart(this, null);
+        void RestartHandler(object sender, EventArgs e)
+        {
+            Restart?.Invoke(this, null);
         }
         /// <summary>Exit event handler..</summary>
-        void ExitHandler(object sender, EventArgs e) {
-            if (Exit != null) Exit(this, null);
+        void ExitHandler(object sender, EventArgs e)
+        {
+            Exit?.Invoke(this, null);
         }
         /// <summary>ShowHide event handler..</summary>
-        void ShowHideHandler(object sender, EventArgs e) {
-            if (ShowHide != null) ShowHide(this, null);
+        void ShowHideHandler(object sender, EventArgs e)
+        {
+            ShowHide?.Invoke(this, null);
         }
         /// <summary>Hides tray icon.</summary>
         public void Hide() {
         	if (MahouUI.TrayFlags || MahouUI.TrayText)
-        		MMain.mahou.flagsCheck.Stop();
+        		MMain.Mahou.flagsCheck.Stop();
             trIcon.Visible = false;
         }
         /// <summary>Shows tray icon.</summary>
         public void Show() {
         	if (MahouUI.TrayFlags || MahouUI.TrayText)
-        		MMain.mahou.flagsCheck.Start();
+        		MMain.Mahou.flagsCheck.Start();
             trIcon.Visible = true;
         }
         /// <summary>Refreshes tray icon various text.</summary>

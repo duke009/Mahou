@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
-namespace JustUI {
+namespace Mahou.JustUI {
 	public partial class JUITitle : Label {
 		public JUITitle() {
 			InitializeComponent();
@@ -16,9 +16,9 @@ namespace JustUI {
 			}
 			base.OnMouseDown(e);
 		}
-		[DllImportAttribute("user32.dll")]
+		[DllImport("user32.dll")]
 		public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-		[DllImportAttribute("user32.dll")]
+		[DllImport("user32.dll")]
 		public static extern bool ReleaseCapture();
 	}
 }

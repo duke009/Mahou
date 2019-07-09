@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mahou {
+namespace Mahou.Classes {
 	public class Hotkey {
 		public readonly int ID;
 		public readonly uint VirtualKeyCode;
@@ -60,7 +60,7 @@ namespace Mahou {
 		/// <param name="hkmods">Hotkey modifiers hex unit.</param>
 		/// <returns></returns>
 		public static string GetMods(int hkmods) {
-			string MOD = "";
+			var MOD = "";
 			if (ContainsModifier(hkmods, (int)WinAPI.MOD_ALT))
 				MOD += "Alt";
 			if (ContainsModifier(hkmods, (int)WinAPI.MOD_CONTROL))
@@ -136,9 +136,8 @@ namespace Mahou {
 		}
 		#endregion
 		public static void CallHotkey(Hotkey hotkey, HKID hkID, ref bool hkOK, Action hkAction) {
-			bool once = false;
-			if (!hotkey.Double) once = true;
-			if (hotkey.ID == (int)hkID && hotkey.Enabled) {
+			var once = !hotkey.Double;
+		    if (hotkey.ID == (int)hkID && hotkey.Enabled) {
 				if (hkOK || once) {
 					Logging.Log("Hotkey [" + Enum.GetName(typeof(HKID), hkID) + "] fired.");
 					if (MahouUI.BlockHKWithCtrl && ContainsModifier((int)hotkey.Modifiers, (int)WinAPI.MOD_CONTROL)) { } else {
@@ -158,7 +157,7 @@ namespace Mahou {
 				} else if (hotkey.Double) {
 					Logging.Log("Waiting for second hotkey ["+Enum.GetName(typeof(HKID), hkID) +"] press.");
 					hkOK = true;
-					KMHook.doublekey.Interval = MMain.mahou.DoubleHKInterval;
+					KMHook.doublekey.Interval = MMain.Mahou.DoubleHKInterval;
 					KMHook.doublekey.Start();
 				}
 			}

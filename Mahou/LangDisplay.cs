@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using Mahou.Classes;
 
 namespace Mahou
 {
@@ -27,7 +28,7 @@ namespace Mahou
 				MahouUI.RefreshFLAG();
 				if (MahouUI.MouseTTAlways && mouseDisplay) {// fix for tray stuck due to variable "LayoutChanged" which being changed by this mouse tooltip always
 					var fi = Icon.FromHandle(MahouUI.FLAG.GetHicon());
-					MMain.mahou.icon.trIcon.Icon = fi;
+					MMain.Mahou.icon.trIcon.Icon = fi;
 					WinAPI.DestroyIcon(fi.Handle);
 				}
 				BackgroundImage = MahouUI.FLAG;

@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace JustUI
+namespace Mahou.JustUI
 {
 	public partial class JUIButton : Button {
 		public static uint OK_HoverBGColor = 0xFFADD8E6;

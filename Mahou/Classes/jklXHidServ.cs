@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 
-namespace Mahou {
+namespace Mahou.Classes {
 	static class jklXHidServ {
 		public static uint cycleEmuDesiredLayout = 0;
 		public static bool start_cyclEmuSwitch = false;
@@ -53,7 +53,7 @@ namespace Mahou {
 	    public static void Init() {
 			if (!MahouUI.ENABLED) return;
 			if (running) {
-				bool exist = true;
+				var exist = true;
 				if (Environment.Is64BitOperatingSystem) {
 					if (Process.GetProcessesByName("jkl").Length > 0) {
 						Logging.Log("[JKL] > JKL already running.");
@@ -76,8 +76,8 @@ namespace Mahou {
 		        var wnd_class = new WinAPI.WNDCLASS();
 		        wnd_class.lpszClassName = "_XHIDDEN_HWND_SERVER";
 		        wnd_class.lpfnWndProc = Marshal.GetFunctionPointerForDelegate(WNDPROC_DELEGATE);
-		        UInt16 cls_reg = WinAPI.RegisterClassW(ref wnd_class);
-		        int last_error = Marshal.GetLastWin32Error();
+		        var cls_reg = WinAPI.RegisterClassW(ref wnd_class);
+		        var last_error = Marshal.GetLastWin32Error();
 		        if (cls_reg == 0 && last_error != 0) {
 		            Logging.Log("[JKL] > Could not register window class, for jkl Hidden Server, err: " + last_error, 1);
 		        }
@@ -135,10 +135,10 @@ namespace Mahou {
 	    }
 		public static void CycleAllLayouts(IntPtr hwnd) {
 			self_change = true;
-			for (int i = 1; i<=MMain.locales.Length; i++) {
+			for (var i = 1; i<=MMain.Locales.Length; i++) {
 				if (MMain.MahouActive()) return; // Else creates invalid culture 0 exception.
 				WinAPI.SendMessage(hwnd, (int)WinAPI.WM_INPUTLANGCHANGEREQUEST, 0, WinAPI.HKL_NEXT);
-				Logging.Log("[JKL] > Cycle all: "+i+"/"+MMain.locales.Length);
+				Logging.Log("[JKL] > Cycle all: "+i+"/"+MMain.Locales.Length);
 //				Thread.Sleep(5);
 //				WinAPI.SendMessage(hwnd, (int)WinAPI.WM_INPUTLANGCHANGEREQUEST, 0, (int)WinAPI.HKL_PREV);
 			}
@@ -146,7 +146,7 @@ namespace Mahou {
 		}
 	    static IntPtr jklWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)  {
 			if (msg == jkluMSG) {
-				uint layout = (uint)lParam;
+				var layout = (uint)lParam;
 				MahouUI.GlobalLayout = MahouUI.currentLayout = layout;
 				Logging.Log("[JKL] > Layout changed to [" + layout + "] / [0x"+layout.ToString("X") +"].");
 				Debug.WriteLine(">> JKL LC: " + layout);
@@ -166,8 +166,8 @@ namespace Mahou {
 						start_cyclEmuSwitch = false;
 				} else if (!self_change) {
 					MahouUI.RefreshFLAG();
-					MMain.mahou.RefreshAllIcons();
-					MMain.mahou.UpdateLDs();
+					MMain.Mahou.RefreshAllIcons();
+					MMain.Mahou.UpdateLDs();
 				}
 			}
 	        return WinAPI.DefWindowProcW(hWnd, msg, wParam, lParam);

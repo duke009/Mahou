@@ -1,10 +1,11 @@
 ﻿// Created by BladeMight in 05.12.2016-18:55
+
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 
-namespace Mahou
+namespace Mahou.Classes
 {
 	public static class Logging {
 		public static string logdir = Path.Combine(MahouUI.nPath, "Logs");

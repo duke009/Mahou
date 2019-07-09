@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Mahou {
+namespace Mahou.Classes {
 	public static class CaretPos {
 		public static Point _CaretST3 = new Point(0,0);
 		public static int SidebarWidth = 0, viewID = 0;
@@ -15,7 +15,7 @@ namespace Mahou {
 		}
 		public static void GetDataFromMCDS() {  
 			try {
-				TcpClient sock = new TcpClient();  
+				var sock = new TcpClient();  
 				sock.Connect("127.0.0.1", 7777);
 				var resp = new byte[1024];
 				sock.Client.Receive(resp);
@@ -51,10 +51,10 @@ namespace Mahou {
 			var _fw = WinAPI.GetForegroundWindow();
 			uint dummy = 0; 
 			var _fwThr_id = WinAPI.GetWindowThreadProcessId(_fw, out dummy);
-			IntPtr _fwFCS = IntPtr.Zero;
+			var _fwFCS = IntPtr.Zero;
 			var _clsNMb = new StringBuilder(256);
-			string _clsNMfw = "";
-			Logging.Log("_c HWND: [" +MMain.MAHOU_HANDLE+ "], _c ThrId: ["+_cThr_id+
+			var _clsNMfw = "";
+			Logging.Log("_c HWND: [" +MMain.MahouHandle+ "], _c ThrId: ["+_cThr_id+
 			            "], "+"_fw HWND: ["+_fw+"]"+", _fw ThrId: "+_fwThr_id+".");
 			if (_fwThr_id != _cThr_id) {
 				var gti = new WinAPI.GUITHREADINFO();
@@ -84,7 +84,7 @@ namespace Mahou {
 					var CaretToScreen = new Point(_fwFCS_Re.Left, _fwFCS_Re.Top);
 					CaretToScreen.X += _CaretST3.X + SidebarWidth + MahouUI.MCDS_Xpos_temp;
 					if (viewID == 4) {
-						WinAPI.RECT clts = new WinAPI.RECT(0,0,0,0);
+						var clts = new WinAPI.RECT(0,0,0,0);
 						WinAPI.GetWindowRect(WinAPI.GetForegroundWindow(), out clts);
 						CaretToScreen.Y = clts.Bottom - MahouUI.MCDS_BottomIndent_temp - 45 + MahouUI.MCDS_Ypos_temp;
 						CaretToScreen.X -= 20;

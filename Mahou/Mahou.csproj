@@ -141,9 +141,15 @@
     <Compile Include="Classes\TrayIcon.cs" />
     <Compile Include="Classes\Configs.cs" />
     <Compile Include="Classes\WinAPI.cs" />
-    <Compile Include="Classes\RawInputForm.cs" />
-    <Compile Include="JustUI\JUIButton.cs" />
-    <Compile Include="JustUI\JUITitle.cs" />
+    <Compile Include="Classes\RawInputForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="JustUI\JUIButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="JustUI\JUITitle.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="JustUI\JUITitle.Designer.cs">
       <DependentUpon>JUITitle.cs</DependentUpon>
     </Compile>
@@ -153,7 +159,9 @@
     <Compile Include="LangDisplay.Designer.cs">
       <DependentUpon>LangDisplay.cs</DependentUpon>
     </Compile>
-    <Compile Include="LangPanel.cs" />
+    <Compile Include="LangPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="LangPanel.Designer.cs">
       <DependentUpon>LangPanel.cs</DependentUpon>
     </Compile>
@@ -165,11 +173,19 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TranslatePanel.cs" />
+    <Compile Include="TranslatePanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="TranslatePanel.Designer.cs">
       <DependentUpon>TranslatePanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="JustUI\TextBoxCA.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="____commit.cs" />
+    <EmbeddedResource Include="MahouUI.resx">
+      <DependentUpon>MahouUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -201,9 +217,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="JustUI" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

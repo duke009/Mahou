@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Mahou.Classes;
 
 namespace Mahou {
 	/// <summary>
@@ -123,7 +124,7 @@ namespace Mahou {
 		#region Derived from JustUI
 		public bool AeroEnabled;
 		public void AeroCheck() {
-			if (KMHook.IfNW7()) {
+			if (KMHook.IsNotWin7()) {
 				int enabled = 0;
 				WinAPI.DwmIsCompositionEnabled(ref enabled);
 				AeroEnabled = (enabled == 1);
@@ -144,13 +145,13 @@ namespace Mahou {
 			base.WndProc(ref m);
 		}
 		protected override void OnPaint(PaintEventArgs e) {
-			if (MMain.mahou == null) { base.OnPaint(e); return; }
+			if (MMain.Mahou == null) { base.OnPaint(e); return; }
 			Graphics g = CreateGraphics();
 			var pn = new Pen(Color.Black);
 			if (AeroEnabled && MahouUI.LangPanelBorderAero)
 				pn = new Pen(CurrentAeroColor());
 			else
-				pn.Color = MMain.mahou.LangPanelBorderColor;
+				pn.Color = MMain.Mahou.LangPanelBorderColor;
 			g.DrawRectangle(pn, new Rectangle(0, 0, Size.Width - 1, Size.Height - 1));
 			g.Dispose();
 			pn.Dispose();

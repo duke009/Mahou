@@ -8,6 +8,7 @@ using System.Web;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Mahou.Classes;
 
 namespace Mahou {
 	/// <summary>
@@ -88,7 +89,7 @@ namespace Mahou {
 					gtresp.targ_lang = tls[i];
 					gtrlist.Add(gtresp);
 				}
-			} catch(Exception e) { MMain.mahou._TranslatePanel.GTRespError(e.Message); }
+			} catch(Exception e) { MMain.Mahou._TranslatePanel.GTRespError(e.Message); }
 			return gtrlist;
 		}
 		public void ShowTranslation(string str, Point pos) {
@@ -378,7 +379,7 @@ namespace Mahou {
 		#region Derived from JustUI
 		public bool AeroEnabled;
 		public void AeroCheck() {
-			if (KMHook.IfNW7()) {
+			if (KMHook.IsNotWin7()) {
 				int enabled = 0;
 				WinAPI.DwmIsCompositionEnabled(ref enabled);
 				AeroEnabled = (enabled == 1);

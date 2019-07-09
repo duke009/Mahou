@@ -1,8 +1,8 @@
 ﻿using System;
-//using System.Collections.Generic;
 using System.Runtime.InteropServices;
+//using System.Collections.Generic;
 
-namespace Mahou
+namespace Mahou.Classes
 {
     public static class NativeClipboard {
     	/// <summary>
@@ -17,10 +17,11 @@ namespace Mahou
         /// Gets clipboard text if clipboard data contains text(CF_UNICODETEXT).
         /// </summary>
         /// <returns>string</returns>
-        public static string GetText()  { // Gets text data from clipboard
+        public static string GetText()  { // Gets text data from clipboard
+
             if (!WinAPI.IsClipboardFormatAvailable(WinAPI.CF_UNICODETEXT))
                 return null;
-            int Tries = 0;
+            var Tries = 0;
             var opened = false;
             string data = null;
             while (true) {

@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Mahou {
+namespace Mahou.Classes {
 	/// <summary>Ini settings writer/reader in memory, not from disk.</summary>
 	class INI {
 		#region Variables
@@ -35,7 +35,7 @@ namespace Mahou {
 			return false;
 		}
 		public int HasSection(string Section) {
-			for (int a = 0; a != lines.Length; a++) {
+			for (var a = 0; a != lines.Length; a++) {
 				log("Line => " + lines[a]);
 				if (IsCommented(lines[a]))
 					continue;
@@ -49,7 +49,7 @@ namespace Mahou {
 			if (sect == -1) return -1;
 			else {
 				log("SECT LINE: " + sect);
-				for (int i = sect+1; i != lines.Length; i++) {
+				for (var i = sect+1; i != lines.Length; i++) {
 					var line = lines[i];
 					if (IsCommented(line))
 						continue;
@@ -135,7 +135,7 @@ namespace Mahou {
         		filePath = Path.Combine(MahouUI.mahou_folder_appd, "Mahou.ini");
         		forceAppData = true;
         	}
-        	bool create = true;
+        	var create = true;
         	try {
 	        	if (!File.Exists(filePath)) { //Create an UTF-16 configuration file
         			// Test write permissions
@@ -315,7 +315,7 @@ namespace Mahou {
 			CheckBool("Hotkeys", "ConvertSelectedText_Double", "false");
 			CheckBool("Hotkeys", "ConvertSelectedText_Enabled", "true");
 			// Convert selected text hotkey
-			CheckInt("Hotkeys", "ConvertLastWord_Key", "19");
+			CheckInt("Hotkeys", "ConvertLastWord_Key", "20");
 			CheckString("Hotkeys", "ConvertLastWord_Modifiers", "");
 			CheckBool("Hotkeys", "ConvertLastWord_Double", "false");
 			CheckBool("Hotkeys", "ConvertLastWord_Enabled", "true");
@@ -482,12 +482,12 @@ namespace Mahou {
             fine = true;
         }
         void CheckBool(string section, string key, string default_value) {
-            bool bt = false; //bool temp
+            var bt = false; //bool temp
             if (!Boolean.TryParse(Read(section, key), out bt))
                 Write(section, key, default_value);
         }
         void CheckInt(string section, string key, string default_value) {
-            int it = 0; //int temp
+            var it = 0; //int temp
             if (!Int32.TryParse(Read(section, key), out it))
                 Write(section, key, default_value);
         }
